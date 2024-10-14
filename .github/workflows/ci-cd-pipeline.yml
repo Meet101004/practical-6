@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: List working directory
+        run: |
+          ls -R
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      
+      - name: Configure Git
+        run: |
+          git config --global http.postBuffer 524288000  # 500 MB
+      
+      - name: Install server dependencies
+        run: |
+          cd backend
+          npm install
+      
+      - name: Install client dependencies
+        run: |
+          cd frontend
+          npm install
+      
+      - name: Run server tests
+        run: |
+          cd backend
+          npm test
+      
+      - name: Run client tests
+        run: |
+          cd frontend
+          npm test
+
+      - name: Build client
+        run: |
+          cd frontend
+          npm run build
+      
+      - name: Deploy to server
+        run: |
+          # Add your deployment script or command here
+          echo "Deploying the application..."
